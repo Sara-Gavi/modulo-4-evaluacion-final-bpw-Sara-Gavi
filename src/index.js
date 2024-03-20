@@ -106,6 +106,50 @@ app.get("/api/recetas/:id", async (req, res) => {
   }
 });
 
+// 3.Endpoint para agregar nueva receta
+
+app.post("/api/recetas", async (req, res) => {
+  try {
+    // Verificar si la solicitud contiene todos los campos que son necesarios
+    if (!req.body.nombre || !req.body.ingredientes || !req.body.instrucciones) {
+      res.status(400).json({
+        success: false,
+        message: "¡HEY! Todos los campos son obligatorios",
+      });
+      return;
+    }
+
+    const conn = await getConnection();
+
+    // Query para insertar una nueva receta en la base de datos
+    const insertReceta = `
+      INSERT INTO recetas (nombre, ingredientes, instrucciones) VALUES (?, ?, ?)
+    `;
+
+    // Hacer la consulta para insertar la nueva receta
+    const [insertResult] = await conn.execute(insertReceta, [
+      req.body.nombre,
+      req.body.ingredientes,
+      req.body.instrucciones,
+    ]);
+
+    conn.end();
+
+    // Responder con exito y el ID de la nueva fila insertada
+    res.json({
+      success: true,
+      id: insertResult.insertId,
+      message: "¡Bien! Nueva receta",
+    });
+  } catch (error) {
+    // Manejar cualquier error que pueda ocurrir
+    res.status(500).json({
+      success: false,
+      message: "UPS! ha ocurrido un error",
+    });
+  }
+});
+
 // 4.Endpoint para actualizar una receta existente
 
 app.put("/api/recetas/:id", async (req, res) => {
