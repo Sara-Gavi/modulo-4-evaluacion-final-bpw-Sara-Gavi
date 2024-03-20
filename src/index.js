@@ -75,3 +75,33 @@ app.get("/api/recetas", async (req, res) => {
     res.status(500).json({ success: false, message: "Ha ocurrido un error" });
   }
 });
+
+// 2.Endpoint para obtener una receta por su ID
+
+app.get("/api/recetas/:id", async (req, res) => {
+  try {
+    // Conectar con la base de datos
+    const conn = await getConnection();
+
+    // Consulta SQL para obtener la receta con el ID
+    const queryGetReceta = `
+      SELECT * FROM recetas WHERE id = ?;
+    `;
+
+    // Hacer la consulta SQL con el ID proporcionado en los parámetros de la solicitud
+    const [receta] = await conn.query(queryGetReceta, [req.params.id]);
+
+    // comprobar si se encontró una receta con ese ID
+    if (receta.length === 0) {
+      // Si no se encuentra la receta, enviar una respuesta de código 404 y un mensaje de error
+      res.status(404).json({ error: " Oh! No hemos encontrado tu receta" });
+      return;
+    }
+
+    // Si se encontró la receta, enviarla como respuesta en formato JSON
+    res.json(receta[0]);
+  } catch (error) {
+    // Si ocurre algún error mientras se hace el endpoint, enviar una respuesta con un código de estado 500 (Internal Server Error) y un mensaje de error más genérico
+    res.status(500).json({ error: "UPS! ha ocurrido un error" });
+  }
+});
