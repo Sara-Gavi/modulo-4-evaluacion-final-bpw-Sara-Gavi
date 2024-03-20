@@ -1,0 +1,26 @@
+{
+  "name": "modulo-4-evaluacion-final-bpw-sara-gavi",
+  "version": "0.0.1",
+  "description": "Express server for recipes database",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "npx nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adalab/modulo-4-evaluacion-final-bpw-Sara-Gavi.git"
+  },
+  "author": "Promo A Sara Gavi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adalab/modulo-4-evaluacion-final-bpw-Sara-Gavi/issues"
+  },
+  "homepage": "https://github.com/Adalab/modulo-4-evaluacion-final-bpw-Sara-Gavi#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.0",
+    "mysql2": "^3.9.2"
+  }
+}
