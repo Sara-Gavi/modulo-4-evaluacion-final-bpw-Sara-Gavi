@@ -105,3 +105,69 @@ app.get("/api/recetas/:id", async (req, res) => {
     res.status(500).json({ error: "UPS! ha ocurrido un error" });
   }
 });
+
+// 4.Endpoint para actualizar una receta existente
+
+app.put("/api/recetas/:id", async (req, res) => {
+  try {
+    const conn = await getConnection();
+
+    const updateReceta = `
+      UPDATE recetas
+      SET nombre = ?, ingredientes = ?, instrucciones = ?
+      WHERE id = ?
+    `;
+
+    const [updateResult] = await conn.execute(updateReceta, [
+      req.body.nombre,
+      req.body.ingredientes,
+      req.body.instrucciones,
+      req.params.id,
+    ]);
+
+    conn.end();
+
+    if (updateResult.length === 0) {
+      res.status(404).json({
+        success: false,
+        message: "¡Ups! no se encontró ninguna receta",
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      message: "¡Bien! receta actualizada",
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "UPS! ha ocurrido un error",
+    });
+  }
+});
+
+// 5.Endpoint para eliminar una receta
+app.delete("/api/recetas/:id", async (req, res) => {
+  try {
+    const conn = await getConnection();
+
+    const deleteReceta = `
+      DELETE FROM recetas WHERE id = ?
+    `;
+
+    const [deleteResult] = await conn.execute(deleteReceta, [req.params.id]);
+
+    conn.end();
+
+    res.json({
+      success: true,
+      message: "¡Adiós receta!",
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: "UPS! ha ocurrido un error",
+    });
+  }
+});
