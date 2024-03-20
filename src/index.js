@@ -171,8 +171,8 @@ app.put("/api/recetas/:id", async (req, res) => {
 
     conn.end();
 
-    if (updateResult.length === 0) {
-      res.status(404).json({
+    if (updateResult === 0) {
+      res.json({
         success: false,
         message: "¡Ups! no se encontró ninguna receta",
       });
