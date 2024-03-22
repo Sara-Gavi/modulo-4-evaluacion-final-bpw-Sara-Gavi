@@ -71,8 +71,10 @@ app.get("/api/recetas", async (req, res) => {
     // Enviar respuesta a la usuaria
     res.json(response);
   } catch (error) {
-    console.error("Error al obtener recetas:", error);
-    res.status(500).json({ success: false, message: "Ha ocurrido un error" });
+    res.json({
+      success: false,
+      error: "UPS! ha ocurrido un error",
+    });
   }
 });
 
@@ -101,8 +103,10 @@ app.get("/api/recetas/:id", async (req, res) => {
     // Si se encontró la receta, enviarla como respuesta en formato JSON
     res.json(receta[0]);
   } catch (error) {
-    // Si ocurre algún error mientras se hace el endpoint, enviar una respuesta con un código de estado 500 (Internal Server Error) y un mensaje de error más genérico
-    res.status(500).json({ error: "UPS! ha ocurrido un error" });
+    res.json({
+      success: false,
+      error: "UPS! ha ocurrido un error",
+    });
   }
 });
 
@@ -142,10 +146,9 @@ app.post("/api/recetas", async (req, res) => {
       message: "¡Bien! Nueva receta",
     });
   } catch (error) {
-    // Manejar cualquier error que pueda ocurrir
-    res.status(500).json({
+    res.json({
       success: false,
-      message: "UPS! ha ocurrido un error",
+      error: "UPS! ha ocurrido un error",
     });
   }
 });
@@ -171,10 +174,11 @@ app.put("/api/recetas/:id", async (req, res) => {
 
     conn.end();
 
-    if (updateResult === 0) {
-      res.json({
+    if (updateResult.affectedRows === 0) {
+      res.status(404).json({
         success: false,
-        message: "¡Ups! no se encontró ninguna receta",
+        error:
+          "¡Ups! No hemos encontrado la receta o no se ha podido actualizar",
       });
       return;
     }
@@ -204,6 +208,12 @@ app.delete("/api/recetas/:id", async (req, res) => {
 
     conn.end();
 
+    if (deleteResult.affectedRows === 0) {
+      res
+        .status(404)
+        .json({ success: false, error: "¡Ups! No hemos encontrado la receta" });
+      return;
+    }
     res.json({
       success: true,
       message: "¡Adiós receta!",
